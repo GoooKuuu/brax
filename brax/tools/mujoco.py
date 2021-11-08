@@ -325,7 +325,7 @@ class MujocoConverter(object):
         collider=config_pb2.Collider(
             box=config_pb2.Collider.Box(halfsize=_vec(size)),
             rotation=_euler(rotation),
-            position=position),
+            position=_vec(position)),
         volume=volume,
         mass=mass)
 
