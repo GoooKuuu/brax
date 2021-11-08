@@ -37,8 +37,10 @@ if __name__ == '__main__':
     )}[env_name]
 
     
-    output_path = './checkpoint'
-    
+    output_path = 'checkpoint'
+    exist = os.path.exists(output_path)
+    if not exist:
+        os.makedirs(output_path, exist_ok=True)
     
 
     xdata = []
