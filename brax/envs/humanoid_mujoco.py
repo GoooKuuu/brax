@@ -1623,8 +1623,6 @@ collide_include {
   first: "left_hip"
   second: "left_ankle"
 }
-angular_damping: -0.05
-baumgarte_erp: 0.1
 dt: 0.015
 substeps: 8
 """
