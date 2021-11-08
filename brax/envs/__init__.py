@@ -26,6 +26,7 @@ from brax.envs import grasp
 from brax.envs import halfcheetah
 from brax.envs import hopper
 from brax.envs import humanoid
+from brax.envs import humanoid_mujoco
 from brax.envs import humanoid_standup
 from brax.envs import inverted_double_pendulum
 from brax.envs import inverted_pendulum
@@ -46,6 +47,7 @@ _envs = {
     'halfcheetah': halfcheetah.Halfcheetah,
     'hopper': hopper.Hopper,
     'humanoid': humanoid.Humanoid,
+    'humanoid_mujoco': humanoid_mujoco.Humanoid_mujoco,
     'humanoidstandup': humanoid_standup.HumanoidStandup,
     'inverted_pendulum': inverted_pendulum.InvertedPendulum,
     'inverted_double_pendulum': inverted_double_pendulum.InvertedDoublePendulum,
