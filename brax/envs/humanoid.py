@@ -493,6 +493,27 @@ joints {
   }
 }
 joints {
+  name: "abdomen_y"
+  stiffness: 15000.0
+  parent: "torso"
+  child: "lwaist"
+  parent_offset {
+    x: -0.01
+    z: -0.195
+  }
+  child_offset {
+    z: 0.065
+  }
+  rotation {
+    z: 90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -75.0
+    max: 30.0
+  }
+}
+joints {
   name: "abdomen_x"
   stiffness: 15000.0
   parent: "lwaist"
@@ -707,6 +728,13 @@ joints {
 actuators {
   name: "abdomen_z"
   joint: "abdomen_z"
+  strength: 350.0
+  torque {
+  }
+}
+actuators {
+  name: "abdomen_y"
+  joint: "abdomen_y"
   strength: 350.0
   torque {
   }

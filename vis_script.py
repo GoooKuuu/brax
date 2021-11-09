@@ -18,7 +18,7 @@ from brax.io import html
 from brax.experimental.braxlines.common import logger_utils
 
 if __name__ == '__main__':
-    env_name = "humanoid_mujoco"  
+    env_name = "humanoid"  
     # param ['ant', 'humanoid', 'fetch', 'grasp', 'halfcheetah', 'ur5e', 'reacher']
     env_fn = envs.create_fn(env_name=env_name)
     env = env_fn()

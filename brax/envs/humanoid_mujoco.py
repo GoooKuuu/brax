@@ -57,7 +57,7 @@ class Humanoid_mujoco(env.Env):
     pos_after = qp.pos[:-1]  # ignore floor at last index
     com_before = jp.sum(pos_before * self.mass, axis=0) / jp.sum(self.mass)
     com_after = jp.sum(pos_after * self.mass, axis=0) / jp.sum(self.mass)
-    lin_vel_cost = 1.25 * (com_after[1] - com_before[1]) / self.sys.config.dt
+    lin_vel_cost = 1.25 * (com_after[0] - com_before[0]) / self.sys.config.dt
     quad_ctrl_cost = .01 * jp.sum(jp.square(action))
     # can ignore contact cost, see: https://github.com/openai/gym/issues/1541
     quad_impact_cost = jp.float32(0)
