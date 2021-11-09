@@ -30,7 +30,7 @@ if __name__ == '__main__':
     
     train_fn = {
     'humanoid_mujoco': functools.partial(
-      ppo.train, num_timesteps = 50000000, log_frequency = 20,
+      ppo.train, num_timesteps = 100000000, log_frequency = 40,
       reward_scaling = 0.1, episode_length = 1000, normalize_observations = True,
       action_repeat = 1, unroll_length = 10, num_minibatches = 32,
       num_update_epochs = 8, discounting = 0.97, learning_rate = 3e-4,
@@ -86,7 +86,7 @@ if __name__ == '__main__':
                 flag = jnp.array([1])
                 state = jit_env_step(state, act)
             html.save_html(
-                f'{output_path}/_sweep.html',
+                f'{output_path}/_sweep1.html',
                 env.sys,
                 qps
             )    
