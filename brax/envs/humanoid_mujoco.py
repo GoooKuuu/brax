@@ -79,7 +79,6 @@ class Humanoid_mujoco(env.Env):
     """Observe humanoid body position, velocities, and angles."""
     # some pre-processing to pull joint angles and velocities
     (joint_angle,), (joint_vel,) = self.sys.joints[0].angle_vel(qp)
-
     # qpos:
     # Z of the torso (1,)
     # orientation of the torso as quaternion (4,)
@@ -122,12 +121,12 @@ class Humanoid_mujoco(env.Env):
 
     disp_vec = body_pos - com_vec
     com_inert = self.inertia + self.mass.reshape(
-        (15, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
-            (15, 1, 1)) * jp.stack([jp.eye(3)] * 15) - v_outer(disp_vec))
+        (17, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
+            (17, 1, 1)) * jp.stack([jp.eye(3)] * 17) - v_outer(disp_vec))
 
     cinert = [com_inert.reshape(-1)]
 
-    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((15, 1))
+    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((17, 1))
     com_angular_vel = (v_cross(disp_vec, body_vel) / square_disp)
     cvel = [com_vel.reshape(-1), com_angular_vel.reshape(-1)]
     return jp.concatenate(qpos + qvel + cinert + cvel + qfrc_actuator +
@@ -284,7 +283,7 @@ bodies {
   name: "right_foot"
   colliders {
     position {
-      z: -0.35
+      z: 0.1
     }
     capsule {
       radius: 0.075
@@ -344,10 +343,10 @@ bodies {
   mass: 2.755696
 }
 bodies {
-  name: "left_root"
+  name: "left_foot"
   colliders {
     position {
-      z: -0.35
+      z: 0.1
     }
     capsule {
       radius: 0.075
@@ -562,10 +561,6 @@ joints {
     min: -45.0
     max: 45.0
   }
-  angle_limit {
-    min: -75.0
-    max: 30.0
-  }
 }
 joints {
   name: "abdomen_y"
@@ -628,14 +623,6 @@ joints {
     min: -10.0
     max: 10.0
   }
-  angle_limit {
-    min: -30.0
-    max: 70.0
-  }
-  angle_limit {
-    min: -10.0
-    max: 10.0
-  }
 }
 joints {
   name: "right_hip_z"
@@ -652,8 +639,8 @@ joints {
     y: -90.0
   }
   angle_limit {
-    min: -60.0
-    max: 35.0
+    min: -10.0
+    max: 10.0
   }
   reference_rotation {
   }
@@ -673,8 +660,8 @@ joints {
     z: 90.0
   }
   angle_limit {
-    min: -110.0
-    max: 20.0
+    min: -30.0
+    max: 70.0
   }
   reference_rotation {
   }
@@ -733,14 +720,6 @@ joints {
     min: -10.0
     max: 10.0
   }
-  angle_limit {
-    min: -30.0
-    max: 70.0
-  }
-  angle_limit {
-    min: -10.0
-    max: 10.0
-  }
 }
 joints {
   name: "left_hip_z"
@@ -757,8 +736,8 @@ joints {
     y: 90.0
   }
   angle_limit {
-    min: -60.0
-    max: 35.0
+    min: -10.0
+    max: 10.0
   }
   reference_rotation {
   }
@@ -778,8 +757,8 @@ joints {
     z: 90.0
   }
   angle_limit {
-    min: -110.0
-    max: 20.0
+    min: -30.0
+    max: 70.0
   }
   reference_rotation {
   }
@@ -837,10 +816,6 @@ joints {
     y: 35.26439
   }
   angular_damping: 20.0
-  angle_limit {
-    min: -85.0
-    max: 60.0
-  }
   angle_limit {
     min: -85.0
     max: 60.0
@@ -921,10 +896,6 @@ joints {
     y: -35.26439
   }
   angular_damping: 20.0
-  angle_limit {
-    min: -60.0
-    max: 85.0
-  }
   angle_limit {
     min: -60.0
     max: 85.0
