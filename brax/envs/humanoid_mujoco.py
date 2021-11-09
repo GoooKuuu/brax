@@ -150,7 +150,7 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 6.0
+  mass: 2.5
 }
 bodies {
   name: "chest"
@@ -167,7 +167,7 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 14.0
+  mass: 3.0
 }
 bodies {
   name: "neck"
