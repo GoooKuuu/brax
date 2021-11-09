@@ -942,11 +942,11 @@ actuators {
 }
 collide_include {
   first: "floor"
-  second: "left_shin"
+  second: "left_foot"
 }
 collide_include {
   first: "floor"
-  second: "right_shin"
+  second: "right_foot"
 }
 defaults {
   angles {
