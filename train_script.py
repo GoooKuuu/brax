@@ -22,6 +22,7 @@ from brax.io import html
 
 
 if __name__ == '__main__':
+    print('------------------------')
     env_name = "humanoid_mujoco"  
     # param ['ant', 'humanoid', 'fetch', 'grasp', 'halfcheetah', 'ur5e', 'reacher']
     env_fn = envs.create_fn(env_name=env_name)
@@ -36,7 +37,7 @@ if __name__ == '__main__':
       entropy_cost = 1e-3, num_envs = 2048, batch_size = 1024, seed=1
     )}[env_name]
 
-    
+    print('------------------------')
     output_path = 'checkpoint'
     exist = os.path.exists(output_path)
     if not exist:
@@ -51,6 +52,7 @@ if __name__ == '__main__':
         print('eval/episode_reward:',metrics['eval/episode_reward'])
         #print('eval/episode_y_vs_x_reward:',metrics['eval/episode_y_vs_x_reward'])
     process_id = jax.process_index()
+    print('------------------------')
     if process_id == 0:
         print('init success')
         print('local device count:',jax.local_device_count())
