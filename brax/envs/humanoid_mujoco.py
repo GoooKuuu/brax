@@ -64,7 +64,7 @@ class Humanoid_mujoco(env.Env):
     alive_bonus = jp.float32(5)
     reward = lin_vel_cost - quad_ctrl_cost - quad_impact_cost + alive_bonus
 
-    done = jp.where(qp.pos[0, 2] < 0.85, jp.float32(1), jp.float32(0))
+    done = jp.where(qp.pos[0, 2] < 0.65, jp.float32(1), jp.float32(0))
     done = jp.where(qp.pos[0, 2] > 2.1, jp.float32(1), done)
     state.metrics.update(
         reward_linvel=lin_vel_cost,
@@ -79,6 +79,7 @@ class Humanoid_mujoco(env.Env):
     """Observe humanoid body position, velocities, and angles."""
     # some pre-processing to pull joint angles and velocities
     (joint_angle,), (joint_vel,) = self.sys.joints[0].angle_vel(qp)
+
     # qpos:
     # Z of the torso (1,)
     # orientation of the torso as quaternion (4,)
@@ -121,12 +122,12 @@ class Humanoid_mujoco(env.Env):
 
     disp_vec = body_pos - com_vec
     com_inert = self.inertia + self.mass.reshape(
-        (17, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
-            (17, 1, 1)) * jp.stack([jp.eye(3)] * 17) - v_outer(disp_vec))
+        (15, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
+            (15, 1, 1)) * jp.stack([jp.eye(3)] * 15) - v_outer(disp_vec))
 
     cinert = [com_inert.reshape(-1)]
 
-    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((17, 1))
+    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((15, 1))
     com_angular_vel = (v_cross(disp_vec, body_vel) / square_disp)
     cvel = [com_vel.reshape(-1), com_angular_vel.reshape(-1)]
     return jp.concatenate(qpos + qvel + cinert + cvel + qfrc_actuator +
@@ -135,16 +136,67 @@ class Humanoid_mujoco(env.Env):
 
 _SYSTEM_CONFIG = """
 bodies {
-  name: "torso"
+  name: "root"
   colliders {
     position {
+      z: 0.07
+    }
+    sphere {
+      radius: 0.09
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 6.0
+}
+bodies {
+  name: "chest"
+  colliders {
+    position {
+      z: 0.12
+    }
+    sphere {
+      radius: 0.11
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 14.0
+}
+bodies {
+  name: "neck"
+  colliders {
+    position {
+      z: 0.175
+    }
+    sphere {
+      radius: 0.1025
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 2.0
+}
+bodies {
+  name: "right_shoulder"
+  colliders {
+    position {
+      z: -0.14
     }
     rotation {
-      x: -90.0
     }
     capsule {
-      radius: 0.07
-      length: 0.28
+      radius: 0.045
+      length: 0.27
     }
   }
   inertia {
@@ -152,231 +204,19 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 3.5918877
+  mass: 1.5
 }
 bodies {
-  name: "head"
+  name: "right_elbow"
   colliders {
     position {
-      z: 0.19
-    }
-    capsule {
-      radius: 0.09
-      length: 0.18
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 3.053628
-}
-bodies {
-  name: "uwaist"
-  colliders {
-    position {
-      x: -0.01
       z: -0.12
     }
     rotation {
-      x: -90.0
-    }
-    capsule {
-      radius: 0.06
-      length: 0.24
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 2.2619467
-}
-bodies {
-  name: "lwaist"
-  colliders {
-    position {
-    }
-    rotation {
-      x: -90.0
-    }
-    capsule {
-      radius: 0.06
-      length: 0.24
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 2.2619467
-}
-bodies {
-  name: "pelvis"
-  colliders {
-    position {
-      x: -0.02
-    }
-    rotation {
-      x: -90.0
-    }
-    capsule {
-      radius: 0.09
-      length: 0.32
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 6.6161942
-}
-bodies {
-  name: "right_thigh"
-  colliders {
-    position {
-      y: 0.005
-      z: -0.17
-    }
-    rotation {
-      x: -178.31532
-    }
-    capsule {
-      radius: 0.06
-      length: 0.46014702
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 4.751751
-}
-bodies {
-  name: "right_shin"
-  colliders {
-    position {
-      z: -0.15
-    }
-    rotation {
-      x: -180.0
-    }
-    capsule {
-      radius: 0.049
-      length: 0.398
-      end: -1
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 2.755696
-}
-bodies {
-  name: "right_foot"
-  colliders {
-    position {
-      z: 0.1
-    }
-    capsule {
-      radius: 0.075
-      length: 0.15
-      end: 1
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 1.7671459
-}
-bodies {
-  name: "left_thigh"
-  colliders {
-    position {
-      y: -0.005
-      z: -0.17
-    }
-    rotation {
-      x: 178.31532
-    }
-    capsule {
-      radius: 0.06
-      length: 0.46014702
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 4.751751
-}
-bodies {
-  name: "left_shin"
-  colliders {
-    position {
-      z: -0.15
-    }
-    rotation {
-      x: -180.0
-    }
-    capsule {
-      radius: 0.049
-      length: 0.398
-      end: -1
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 2.755696
-}
-bodies {
-  name: "left_foot"
-  colliders {
-    position {
-      z: 0.1
-    }
-    capsule {
-      radius: 0.075
-      length: 0.15
-      end: 1
-    }
-  }
-  inertia {
-    x: 1.0
-    y: 1.0
-    z: 1.0
-  }
-  mass: 1.7671459
-}
-bodies {
-  name: "right_upper_arm"
-  colliders {
-    position {
-      x: 0.08
-      y: -0.08
-      z: -0.08
-    }
-    rotation {
-      x: 135.0
-      y: 35.26439
-      z: -75.0
     }
     capsule {
       radius: 0.04
-      length: 0.35712814
+      length: 0.215
     }
   }
   inertia {
@@ -384,24 +224,36 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 1.6610805
+  mass: 1.0
 }
 bodies {
-  name: "right_lower_arm"
+  name: "right_wrist"
   colliders {
     position {
-      x: 0.09
-      y: 0.09
-      z: 0.09
+      z: -0.258947
+    }
+    sphere {
+      radius: 0.04
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 0.5
+}
+bodies {
+  name: "left_shoulder"
+  colliders {
+    position {
+      z: -0.14
     }
     rotation {
-      x: -45.0
-      y: 35.26439
-      z: 15.0
     }
     capsule {
-      radius: 0.031
-      length: 0.33912814
+      radius: 0.045
+      length: 0.27
     }
   }
   inertia {
@@ -409,19 +261,19 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 0.9614576
+  mass: 1.5
 }
 bodies {
-  name: "right_hand"
+  name: "left_elbow"
   colliders {
     position {
-      x: 0.18
-      y: 0.18
-      z: 0.18
+      z: -0.12
+    }
+    rotation {
     }
     capsule {
       radius: 0.04
-      length: 0.08
+      length: 0.215
     }
   }
   inertia {
@@ -429,24 +281,36 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 0.26808256
+  mass: 1.0
 }
 bodies {
-  name: "left_upper_arm"
+  name: "left_wrist"
   colliders {
     position {
-      x: 0.08
-      y: 0.08
-      z: -0.08
+      z: -0.258947
+    }
+    sphere {
+      radius: 0.04
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 0.5
+}
+bodies {
+  name: "right_hip"
+  colliders {
+    position {
+      z: -0.21
     }
     rotation {
-      x: -135.0
-      y: 35.26439
-      z: 75.0
     }
     capsule {
-      radius: 0.04
-      length: 0.35712814
+      radius: 0.055
+      length: 0.41
     }
   }
   inertia {
@@ -454,24 +318,19 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 1.6610805
+  mass: 4.5
 }
 bodies {
-  name: "left_lower_arm"
+  name: "right_knee"
   colliders {
     position {
-      x: 0.09
-      y: -0.09
-      z: 0.09
+      z: -0.2
     }
     rotation {
-      x: 45.0
-      y: 35.26439
-      z: -15.0
     }
     capsule {
-      radius: 0.031
-      length: 0.33912814
+      radius: 0.05
+      length: 0.41
     }
   }
   inertia {
@@ -479,19 +338,23 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 0.9614576
+  mass: 3.0
 }
 bodies {
-  name: "left_hand"
+  name: "right_ankle"
   colliders {
     position {
-      x: 0.18
-      y: -0.18
-      z: 0.18
+      x: 0.045
+      z: -0.0225
     }
-    capsule {
-      radius: 0.04
-      length: 0.08
+    rotation {
+    }
+    box {
+      halfsize {
+        x: 0.0885
+        y: 0.045
+        z: 0.0275
+      }
     }
   }
   inertia {
@@ -499,7 +362,71 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 0.26808256
+  mass: 1.0
+}
+bodies {
+  name: "left_hip"
+  colliders {
+    position {
+      z: -0.21
+    }
+    rotation {
+    }
+    capsule {
+      radius: 0.055
+      length: 0.41
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 4.5
+}
+bodies {
+  name: "left_knee"
+  colliders {
+    position {
+      z: -0.2
+    }
+    rotation {
+    }
+    capsule {
+      radius: 0.05
+      length: 0.41
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 3.0
+}
+bodies {
+  name: "left_ankle"
+  colliders {
+    position {
+      x: 0.045
+      z: -0.0225
+    }
+    rotation {
+    }
+    box {
+      halfsize {
+        x: 0.0885
+        y: 0.045
+        z: 0.0275
+      }
+    }
+  }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 1.0
 }
 bodies {
   name: "floor"
@@ -516,144 +443,32 @@ bodies {
   frozen { all: true }
 }
 joints {
-  name: "head"
+  name: "chest_x"
   stiffness: 15000.0
-  parent: "torso"
-  child: "head"
-  rotation {
-    y: -90.0
+  parent: "root"
+  child: "chest"
+  parent_offset {
+    z: 0.236151
   }
+  child_offset {
+  }
+  rotation {
+  }
+  angular_damping: 20.0
   angle_limit {
+    min: -1.2
+    max: 1.2
   }
   reference_rotation {
   }
 }
 joints {
-  name: "uwaist"
+  name: "chest_y"
   stiffness: 15000.0
-  parent: "torso"
-  child: "uwaist"
-  rotation {
-    y: -90.0
-  }
-  angle_limit {
-  }
-  reference_rotation {
-  }
-}
-joints {
-  name: "abdomen_z"
-  stiffness: 15000.0
-  parent: "torso"
-  child: "lwaist"
+  parent: "root"
+  child: "chest"
   parent_offset {
-    x: -0.01
-    z: -0.195
-  }
-  child_offset {
-    z: 0.065
-  }
-  rotation {
-    y: -90.0
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -45.0
-    max: 45.0
-  }
-}
-joints {
-  name: "abdomen_y"
-  stiffness: 15000.0
-  parent: "torso"
-  child: "lwaist"
-  parent_offset {
-    x: -0.01
-    z: -0.195
-  }
-  child_offset {
-    z: 0.065
-  }
-  rotation {
-    z: 90.0
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -75.0
-    max: 30.0
-  }
-  reference_rotation {
-  }
-}
-joints {
-  name: "abdomen_x"
-  stiffness: 15000.0
-  parent: "lwaist"
-  child: "pelvis"
-  parent_offset {
-    z: -0.065
-  }
-  child_offset {
-    z: 0.1
-  }
-  rotation {
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -35.0
-    max: 35.0
-  }
-}
-joints {
-  name: "right_hip_x"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "right_thigh"
-  parent_offset {
-    y: -0.1
-    z: -0.04
-  }
-  child_offset {
-  }
-  rotation {
-  }
-  angular_damping: 20.0
-  limit_strength: 2000.0
-  angle_limit {
-    min: -10.0
-    max: 10.0
-  }
-}
-joints {
-  name: "right_hip_z"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "right_thigh"
-  parent_offset {
-    y: -0.1
-    z: -0.04
-  }
-  child_offset {
-  }
-  rotation {
-    y: -90.0
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -10.0
-    max: 10.0
-  }
-  reference_rotation {
-  }
-}
-joints {
-  name: "right_hip_y"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "right_thigh"
-  parent_offset {
-    y: -0.1
-    z: -0.04
+    z: 0.236151
   }
   child_offset {
   }
@@ -662,98 +477,60 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -30.0
-    max: 70.0
+    min: -1.2
+    max: 1.2
   }
   reference_rotation {
   }
 }
 joints {
-  name: "right_knee"
+  name: "chest_z"
   stiffness: 15000.0
-  parent: "right_thigh"
-  child: "right_shin"
+  parent: "root"
+  child: "chest"
   parent_offset {
-    y: 0.01
-    z: -0.383
+    z: 0.236151
   }
   child_offset {
-    z: 0.02
-  }
-  rotation {
-    z: -90.0
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -160.0
-    max: -2.0
-  }
-}
-joints {
-  name: "$right_shin.right_foot"
-  stiffness: 15000.0
-  parent: "right_shin"
-  child: "right_foot"
-  parent_offset {
-    z: -0.45
   }
   rotation {
     y: -90.0
   }
   angular_damping: 20.0
   angle_limit {
+    min: -1.2
+    max: 1.2
   }
   reference_rotation {
   }
 }
 joints {
-  name: "left_hip_x"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "left_thigh"
+  name: "neck_x"
+  stiffness: 15000.0
+  parent: "chest"
+  child: "neck"
   parent_offset {
-    y: 0.1
-    z: -0.04
-  }
-  child_offset {
-  }
-  angular_damping: 20.0
-  limit_strength: 2000.0
-  angle_limit {
-    min: -10.0
-    max: 10.0
-  }
-}
-joints {
-  name: "left_hip_z"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "left_thigh"
-  parent_offset {
-    y: 0.1
-    z: -0.04
+    z: 0.223894
   }
   child_offset {
   }
   rotation {
-    y: 90.0
   }
   angular_damping: 20.0
   angle_limit {
-    min: -10.0
-    max: 10.0
+    min: -1.0
+    max: 1.0
   }
   reference_rotation {
   }
 }
 joints {
-  name: "left_hip_y"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "left_thigh"
+  name: "neck_y"
+  stiffness: 15000.0
+  parent: "chest"
+  child: "neck"
   parent_offset {
-    y: 0.1
-    z: -0.04
+    z: 0.223894
   }
   child_offset {
   }
@@ -762,101 +539,106 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -30.0
-    max: 70.0
+    min: -1.0
+    max: 1.0
   }
   reference_rotation {
   }
 }
 joints {
-  name: "left_knee"
+  name: "neck_z"
   stiffness: 15000.0
-  parent: "left_thigh"
-  child: "left_shin"
+  parent: "chest"
+  child: "neck"
   parent_offset {
-    y: -0.01
-    z: -0.383
+    z: 0.223894
   }
   child_offset {
-    z: 0.02
-  }
-  rotation {
-    z: -90.0
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -160.0
-    max: -2.0
-  }
-}
-joints {
-  name: "$left_shin.left_foot"
-  stiffness: 15000.0
-  parent: "left_shin"
-  child: "left_foot"
-  parent_offset {
-    z: -0.45
   }
   rotation {
     y: -90.0
   }
   angular_damping: 20.0
   angle_limit {
+    min: -1.0
+    max: 1.0
   }
   reference_rotation {
   }
 }
 joints {
-  name: "right_shoulder1"
+  name: "right_shoulder_x"
   stiffness: 15000.0
-  parent: "torso"
-  child: "right_upper_arm"
+  parent: "chest"
+  child: "right_shoulder"
   parent_offset {
-    y: -0.17
-    z: 0.06
+    x: -0.02405
+    y: -0.18311
+    z: 0.2435
   }
   child_offset {
   }
   rotation {
-    x: 135.0
-    y: 35.26439
   }
   angular_damping: 20.0
   angle_limit {
-    min: -85.0
-    max: 60.0
-  }
-  limit_strength: 1000.0
-}
-joints {
-  name: "right_shoulder2"
-  stiffness: 15000.0
-  parent: "torso"
-  child: "right_upper_arm"
-  parent_offset {
-    y: -0.17
-    z: 0.06
-  }
-  child_offset {
-  }
-  rotation {
-    x: 45.0
-    y: -45.0
-    z: -90.0
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -85.0
-    max: 60.0
+    min: -3.14
+    max: 0.5
   }
   reference_rotation {
   }
 }
 joints {
-  name: "right_hand"
+  name: "right_shoulder_y"
   stiffness: 15000.0
-  parent: "right_lower_arm"
-  child: "right_hand"
+  parent: "chest"
+  child: "right_shoulder"
+  parent_offset {
+    x: -0.02405
+    y: -0.18311
+    z: 0.2435
+  }
+  child_offset {
+  }
+  rotation {
+    z: 90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -3.14
+    max: 0.7
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "right_shoulder_z"
+  stiffness: 15000.0
+  parent: "chest"
+  child: "right_shoulder"
+  parent_offset {
+    x: -0.02405
+    y: -0.18311
+    z: 0.2435
+  }
+  child_offset {
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.5
+    max: 1.5
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "right_wrist"
+  stiffness: 15000.0
+  parent: "right_elbow"
+  child: "right_wrist"
   rotation {
     y: -90.0
   }
@@ -869,76 +651,96 @@ joints {
 joints {
   name: "right_elbow"
   stiffness: 15000.0
-  parent: "right_upper_arm"
-  child: "right_lower_arm"
+  parent: "right_shoulder"
+  child: "right_elbow"
   parent_offset {
-    x: 0.18
-    y: -0.18
-    z: -0.18
+    z: -0.274788
   }
   child_offset {
   }
   rotation {
-    x: 135.0
-    z: 90.0
+    z: -90.0
   }
   angular_damping: 20.0
   angle_limit {
-    min: -90.0
-    max: 50.0
-  }
-}
-joints {
-  name: "left_shoulder1"
-  stiffness: 15000.0
-  parent: "torso"
-  child: "left_upper_arm"
-  parent_offset {
-    y: 0.17
-    z: 0.06
-  }
-  child_offset {
-  }
-  rotation {
-    x: 45.0
-    y: -35.26439
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -60.0
-    max: 85.0
-  }
-  limit_strength: 1000.0
-}
-joints {
-  name: "left_shoulder2"
-  stiffness: 15000.0
-  parent: "torso"
-  child: "left_upper_arm"
-  parent_offset {
-    y: 0.17
-    z: 0.06
-  }
-  child_offset {
-  }
-  rotation {
-    x: -45.0
-    y: -45.0
-    z: 90.0
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -60.0
-    max: 85.0
+    max: 2.8
   }
   reference_rotation {
   }
 }
 joints {
-  name: "left_hand"
+  name: "left_shoulder_x"
   stiffness: 15000.0
-  parent: "left_lower_arm"
-  child: "left_hand"
+  parent: "chest"
+  child: "left_shoulder"
+  parent_offset {
+    x: -0.02405
+    y: 0.18311
+    z: 0.2435
+  }
+  child_offset {
+  }
+  rotation {
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -0.5
+    max: 3.14
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_shoulder_y"
+  stiffness: 15000.0
+  parent: "chest"
+  child: "left_shoulder"
+  parent_offset {
+    x: -0.02405
+    y: 0.18311
+    z: 0.2435
+  }
+  child_offset {
+  }
+  rotation {
+    z: 90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -3.14
+    max: 0.7
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_shoulder_z"
+  stiffness: 15000.0
+  parent: "chest"
+  child: "left_shoulder"
+  parent_offset {
+    x: -0.02405
+    y: 0.18311
+    z: 0.2435
+  }
+  child_offset {
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.5
+    max: 1.5
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_wrist"
+  stiffness: 15000.0
+  parent: "left_elbow"
+  child: "left_wrist"
   rotation {
     y: -90.0
   }
@@ -951,112 +753,372 @@ joints {
 joints {
   name: "left_elbow"
   stiffness: 15000.0
-  parent: "left_upper_arm"
-  child: "left_lower_arm"
+  parent: "left_shoulder"
+  child: "left_elbow"
   parent_offset {
-    x: 0.18
-    y: 0.18
-    z: -0.18
+    z: -0.274788
   }
   child_offset {
   }
   rotation {
-    x: 45.0
     z: -90.0
   }
   angular_damping: 20.0
   angle_limit {
-    min: -90.0
-    max: 50.0
+    max: 2.8
+  }
+  reference_rotation {
   }
 }
-actuators {
-  name: "abdomen_z"
-  joint: "abdomen_z"
-  strength: 350.0
-  torque {
-  }
-}
-actuators {
-  name: "abdomen_x"
-  joint: "abdomen_x"
-  strength: 350.0
-  torque {
-  }
-}
-actuators {
-  name: "abdomen_y"
-  joint: "abdomen_y"
-  strength: 350.0
-  angle {
-  }
-}
-actuators {
+joints {
   name: "right_hip_x"
-  joint: "right_hip_x"
-  strength: 350.0
-  torque {
+  stiffness: 15000.0
+  parent: "root"
+  child: "right_hip"
+  parent_offset {
+    y: -0.084887
+  }
+  child_offset {
+  }
+  rotation {
+  }
+  angular_damping: 20.0
+  limit_strength: 2000.0
+  angle_limit {
+    min: -1.2
+    max: 1.2
+  }
+  reference_rotation {
   }
 }
-actuators {
-  name: "right_hip_z"
-  joint: "right_hip_z"
-  strength: 350.0
-  angle {
-  }
-}
-actuators {
+joints {
   name: "right_hip_y"
-  joint: "right_hip_y"
-  strength: 350.0
-  angle {
+  stiffness: 15000.0
+  parent: "root"
+  child: "right_hip"
+  parent_offset {
+    y: -0.084887
+  }
+  child_offset {
+  }
+  rotation {
+    z: 90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -2.57
+    max: 1.57
+  }
+  reference_rotation {
   }
 }
-actuators {
+joints {
+  name: "right_hip_z"
+  stiffness: 15000.0
+  parent: "root"
+  child: "right_hip"
+  parent_offset {
+    y: -0.084887
+  }
+  child_offset {
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.0
+  }
+  reference_rotation {
+  }
+}
+joints {
   name: "right_knee"
-  joint: "right_knee"
-  strength: 350.0
-  torque {
+  stiffness: 15000.0
+  parent: "right_hip"
+  child: "right_knee"
+  parent_offset {
+    z: -0.421546
+  }
+  child_offset {
+  }
+  rotation {
+    z: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -2.7
+  }
+  reference_rotation {
   }
 }
-actuators {
+joints {
+  name: "right_ankle_x"
+  stiffness: 15000.0
+  parent: "right_knee"
+  child: "right_ankle"
+  parent_offset {
+    z: -0.40987
+  }
+  child_offset {
+  }
+  rotation {
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.0
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "right_ankle_y"
+  stiffness: 15000.0
+  parent: "right_knee"
+  child: "right_ankle"
+  parent_offset {
+    z: -0.40987
+  }
+  child_offset {
+  }
+  rotation {
+    z: 90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.57
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "right_ankle_z"
+  stiffness: 15000.0
+  parent: "right_knee"
+  child: "right_ankle"
+  parent_offset {
+    z: -0.40987
+  }
+  child_offset {
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.0
+  }
+  reference_rotation {
+  }
+}
+joints {
   name: "left_hip_x"
-  joint: "left_hip_x"
-  strength: 350.0
-  torque {
+  stiffness: 15000.0
+  parent: "root"
+  child: "left_hip"
+  parent_offset {
+    y: 0.084887
+  }
+  child_offset {
+  }
+  rotation {
+  }
+  angular_damping: 20.0
+  limit_strength: 2000.0
+  angle_limit {
+    min: -1.2
+    max: 1.2
+  }
+  reference_rotation {
   }
 }
-actuators {
-  name: "left_hip_z"
-  joint: "left_hip_z"
-  strength: 350.0
-  angle {
-  }
-}
-actuators {
+joints {
   name: "left_hip_y"
-  joint: "left_hip_y"
-  strength: 350.0
+  stiffness: 15000.0
+  parent: "root"
+  child: "left_hip"
+  parent_offset {
+    y: 0.084887
+  }
+  child_offset {
+  }
+  rotation {
+    z: 90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -2.57
+    max: 1.57
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_hip_z"
+  stiffness: 15000.0
+  parent: "root"
+  child: "left_hip"
+  parent_offset {
+    y: 0.084887
+  }
+  child_offset {
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.0
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_knee"
+  stiffness: 15000.0
+  parent: "left_hip"
+  child: "left_knee"
+  parent_offset {
+    z: -0.421546
+  }
+  child_offset {
+  }
+  rotation {
+    z: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -2.7
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_ankle_x"
+  stiffness: 15000.0
+  parent: "left_knee"
+  child: "left_ankle"
+  parent_offset {
+    z: -0.40987
+  }
+  child_offset {
+  }
+  rotation {
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.0
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_ankle_y"
+  stiffness: 15000.0
+  parent: "left_knee"
+  child: "left_ankle"
+  parent_offset {
+    z: -0.40987
+  }
+  child_offset {
+  }
+  rotation {
+    z: 90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.57
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_ankle_z"
+  stiffness: 15000.0
+  parent: "left_knee"
+  child: "left_ankle"
+  parent_offset {
+    z: -0.40987
+  }
+  child_offset {
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -1.0
+    max: 1.0
+  }
+  reference_rotation {
+  }
+}
+actuators {
+  name: "chest_x"
+  joint: "chest_x"
+  strength: 200.0
   angle {
   }
 }
 actuators {
-  name: "left_knee"
-  joint: "left_knee"
-  strength: 350.0
-  torque {
+  name: "chest_y"
+  joint: "chest_y"
+  strength: 200.0
+  angle {
   }
 }
 actuators {
-  name: "right_shoulder1"
-  joint: "right_shoulder1"
+  name: "chest_z"
+  joint: "chest_z"
+  strength: 200.0
+  angle {
+  }
+}
+actuators {
+  name: "neck_x"
+  joint: "neck_x"
+  strength: 50.0
+  angle {
+  }
+}
+actuators {
+  name: "neck_y"
+  joint: "neck_y"
+  strength: 50.0
+  angle {
+  }
+}
+actuators {
+  name: "neck_z"
+  joint: "neck_z"
+  strength: 50.0
+  angle {
+  }
+}
+actuators {
+  name: "right_shoulder_x"
+  joint: "right_shoulder_x"
   strength: 100.0
-  torque {
+  angle {
   }
 }
 actuators {
-  name: "right_shoulder2"
-  joint: "right_shoulder2"
+  name: "right_shoulder_y"
+  joint: "right_shoulder_y"
+  strength: 100.0
+  angle {
+  }
+}
+actuators {
+  name: "right_shoulder_z"
+  joint: "right_shoulder_z"
   strength: 100.0
   angle {
   }
@@ -1064,20 +1126,27 @@ actuators {
 actuators {
   name: "right_elbow"
   joint: "right_elbow"
-  strength: 100.0
-  torque {
+  strength: 60.0
+  angle {
   }
 }
 actuators {
-  name: "left_shoulder1"
-  joint: "left_shoulder1"
+  name: "left_shoulder_x"
+  joint: "left_shoulder_x"
   strength: 100.0
-  torque {
+  angle {
   }
 }
 actuators {
-  name: "left_shoulder2"
-  joint: "left_shoulder2"
+  name: "left_shoulder_y"
+  joint: "left_shoulder_y"
+  strength: 100.0
+  angle {
+  }
+}
+actuators {
+  name: "left_shoulder_z"
+  joint: "left_shoulder_z"
   strength: 100.0
   angle {
   }
@@ -1085,42 +1154,507 @@ actuators {
 actuators {
   name: "left_elbow"
   joint: "left_elbow"
-  strength: 100.0
-  torque {
+  strength: 60.0
+  angle {
   }
 }
-collide_include {
-  first: "floor"
-  second: "left_shin"
-}
-collide_include {
-  first: "floor"
-  second: "right_shin"
-}
-collide_include {
-  first: "floor"
-  second: "left_foot"
-}
-collide_include {
-  first: "floor"
-  second: "right_foot"
-}
-defaults {
-  angles {
-    name: "left_knee"
-    angle { x: -25. y: 0 z: 0 }
-  }
-  angles {
-    name: "right_knee"
-    angle { x: -25. y: 0 z: 0 }
+actuators {
+  name: "right_hip_x"
+  joint: "right_hip_x"
+  strength: 200.0
+  angle {
   }
 }
-friction: 1.0
+actuators {
+  name: "right_hip_y"
+  joint: "right_hip_y"
+  strength: 200.0
+  angle {
+  }
+}
+actuators {
+  name: "right_hip_z"
+  joint: "right_hip_z"
+  strength: 200.0
+  angle {
+  }
+}
+actuators {
+  name: "right_knee"
+  joint: "right_knee"
+  strength: 150.0
+  angle {
+  }
+}
+actuators {
+  name: "right_ankle_x"
+  joint: "right_ankle_x"
+  strength: 90.0
+  angle {
+  }
+}
+actuators {
+  name: "right_ankle_y"
+  joint: "right_ankle_y"
+  strength: 90.0
+  angle {
+  }
+}
+actuators {
+  name: "right_ankle_z"
+  joint: "right_ankle_z"
+  strength: 90.0
+  angle {
+  }
+}
+actuators {
+  name: "left_hip_x"
+  joint: "left_hip_x"
+  strength: 200.0
+  angle {
+  }
+}
+actuators {
+  name: "left_hip_y"
+  joint: "left_hip_y"
+  strength: 200.0
+  angle {
+  }
+}
+actuators {
+  name: "left_hip_z"
+  joint: "left_hip_z"
+  strength: 200.0
+  angle {
+  }
+}
+actuators {
+  name: "left_knee"
+  joint: "left_knee"
+  strength: 150.0
+  angle {
+  }
+}
+actuators {
+  name: "left_ankle_x"
+  joint: "left_ankle_x"
+  strength: 90.0
+  angle {
+  }
+}
+actuators {
+  name: "left_ankle_y"
+  joint: "left_ankle_y"
+  strength: 90.0
+  angle {
+  }
+}
+actuators {
+  name: "left_ankle_z"
+  joint: "left_ankle_z"
+  strength: 90.0
+  angle {
+  }
+}
+friction: 0.6
 gravity {
   z: -9.81
 }
+velocity_damping: 1.0
 angular_damping: -0.05
 baumgarte_erp: 0.1
-dt: 0.015
-substeps: 8
+collide_include {
+  first: "floor"
+  second: "root"
+}
+collide_include {
+  first: "floor"
+  second: "chest"
+}
+collide_include {
+  first: "floor"
+  second: "neck"
+}
+collide_include {
+  first: "floor"
+  second: "right_shoulder"
+}
+collide_include {
+  first: "floor"
+  second: "right_elbow"
+}
+collide_include {
+  first: "floor"
+  second: "right_wrist"
+}
+collide_include {
+  first: "floor"
+  second: "left_shoulder"
+}
+collide_include {
+  first: "floor"
+  second: "left_elbow"
+}
+collide_include {
+  first: "floor"
+  second: "left_wrist"
+}
+collide_include {
+  first: "floor"
+  second: "right_hip"
+}
+collide_include {
+  first: "floor"
+  second: "right_knee"
+}
+collide_include {
+  first: "floor"
+  second: "right_ankle"
+}
+collide_include {
+  first: "floor"
+  second: "left_hip"
+}
+collide_include {
+  first: "floor"
+  second: "left_knee"
+}
+collide_include {
+  first: "floor"
+  second: "left_ankle"
+}
+collide_include {
+  first: "root"
+  second: "neck"
+}
+collide_include {
+  first: "root"
+  second: "right_shoulder"
+}
+collide_include {
+  first: "root"
+  second: "right_elbow"
+}
+collide_include {
+  first: "root"
+  second: "right_wrist"
+}
+collide_include {
+  first: "root"
+  second: "left_shoulder"
+}
+collide_include {
+  first: "root"
+  second: "left_elbow"
+}
+collide_include {
+  first: "root"
+  second: "left_wrist"
+}
+collide_include {
+  first: "root"
+  second: "right_knee"
+}
+collide_include {
+  first: "root"
+  second: "right_ankle"
+}
+collide_include {
+  first: "root"
+  second: "left_knee"
+}
+collide_include {
+  first: "root"
+  second: "left_ankle"
+}
+collide_include {
+  first: "chest"
+  second: "right_elbow"
+}
+collide_include {
+  first: "chest"
+  second: "right_wrist"
+}
+collide_include {
+  first: "chest"
+  second: "left_elbow"
+}
+collide_include {
+  first: "chest"
+  second: "left_wrist"
+}
+collide_include {
+  first: "chest"
+  second: "right_knee"
+}
+collide_include {
+  first: "chest"
+  second: "right_ankle"
+}
+collide_include {
+  first: "chest"
+  second: "left_knee"
+}
+collide_include {
+  first: "chest"
+  second: "left_ankle"
+}
+collide_include {
+  first: "neck"
+  second: "right_elbow"
+}
+collide_include {
+  first: "neck"
+  second: "right_wrist"
+}
+collide_include {
+  first: "neck"
+  second: "left_elbow"
+}
+collide_include {
+  first: "neck"
+  second: "left_wrist"
+}
+collide_include {
+  first: "neck"
+  second: "right_hip"
+}
+collide_include {
+  first: "neck"
+  second: "right_knee"
+}
+collide_include {
+  first: "neck"
+  second: "right_ankle"
+}
+collide_include {
+  first: "neck"
+  second: "left_hip"
+}
+collide_include {
+  first: "neck"
+  second: "left_knee"
+}
+collide_include {
+  first: "neck"
+  second: "left_ankle"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "left_elbow"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "left_wrist"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "right_hip"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "right_knee"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "right_ankle"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "left_hip"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "left_knee"
+}
+collide_include {
+  first: "right_shoulder"
+  second: "left_ankle"
+}
+collide_include {
+  first: "right_elbow"
+  second: "left_shoulder"
+}
+collide_include {
+  first: "right_elbow"
+  second: "left_elbow"
+}
+collide_include {
+  first: "right_elbow"
+  second: "left_wrist"
+}
+collide_include {
+  first: "right_elbow"
+  second: "right_hip"
+}
+collide_include {
+  first: "right_elbow"
+  second: "right_knee"
+}
+collide_include {
+  first: "right_elbow"
+  second: "right_ankle"
+}
+collide_include {
+  first: "right_elbow"
+  second: "left_hip"
+}
+collide_include {
+  first: "right_elbow"
+  second: "left_knee"
+}
+collide_include {
+  first: "right_elbow"
+  second: "left_ankle"
+}
+collide_include {
+  first: "right_wrist"
+  second: "left_shoulder"
+}
+collide_include {
+  first: "right_wrist"
+  second: "left_elbow"
+}
+collide_include {
+  first: "right_wrist"
+  second: "left_wrist"
+}
+collide_include {
+  first: "right_wrist"
+  second: "right_hip"
+}
+collide_include {
+  first: "right_wrist"
+  second: "right_knee"
+}
+collide_include {
+  first: "right_wrist"
+  second: "right_ankle"
+}
+collide_include {
+  first: "right_wrist"
+  second: "left_hip"
+}
+collide_include {
+  first: "right_wrist"
+  second: "left_knee"
+}
+collide_include {
+  first: "right_wrist"
+  second: "left_ankle"
+}
+collide_include {
+  first: "left_shoulder"
+  second: "right_hip"
+}
+collide_include {
+  first: "left_shoulder"
+  second: "right_knee"
+}
+collide_include {
+  first: "left_shoulder"
+  second: "right_ankle"
+}
+collide_include {
+  first: "left_shoulder"
+  second: "left_hip"
+}
+collide_include {
+  first: "left_shoulder"
+  second: "left_knee"
+}
+collide_include {
+  first: "left_shoulder"
+  second: "left_ankle"
+}
+collide_include {
+  first: "left_elbow"
+  second: "right_hip"
+}
+collide_include {
+  first: "left_elbow"
+  second: "right_knee"
+}
+collide_include {
+  first: "left_elbow"
+  second: "right_ankle"
+}
+collide_include {
+  first: "left_elbow"
+  second: "left_hip"
+}
+collide_include {
+  first: "left_elbow"
+  second: "left_knee"
+}
+collide_include {
+  first: "left_elbow"
+  second: "left_ankle"
+}
+collide_include {
+  first: "left_wrist"
+  second: "right_hip"
+}
+collide_include {
+  first: "left_wrist"
+  second: "right_knee"
+}
+collide_include {
+  first: "left_wrist"
+  second: "right_ankle"
+}
+collide_include {
+  first: "left_wrist"
+  second: "left_hip"
+}
+collide_include {
+  first: "left_wrist"
+  second: "left_knee"
+}
+collide_include {
+  first: "left_wrist"
+  second: "left_ankle"
+}
+collide_include {
+  first: "right_hip"
+  second: "right_ankle"
+}
+collide_include {
+  first: "right_hip"
+  second: "left_knee"
+}
+collide_include {
+  first: "right_hip"
+  second: "left_ankle"
+}
+collide_include {
+  first: "right_knee"
+  second: "left_hip"
+}
+collide_include {
+  first: "right_knee"
+  second: "left_knee"
+}
+collide_include {
+  first: "right_knee"
+  second: "left_ankle"
+}
+collide_include {
+  first: "right_ankle"
+  second: "left_hip"
+}
+collide_include {
+  first: "right_ankle"
+  second: "left_knee"
+}
+collide_include {
+  first: "right_ankle"
+  second: "left_ankle"
+}
+collide_include {
+  first: "left_hip"
+  second: "left_ankle"
+}
+dt: 0.02
+substeps: 4
 """
