@@ -456,8 +456,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.2
-    max: 1.2
+    min: -68.75
+    max: 68.75
   }
   reference_rotation {
   }
@@ -477,8 +477,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.2
-    max: 1.2
+    min: -68.75
+    max: 68.75
   }
   reference_rotation {
   }
@@ -498,8 +498,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.2
-    max: 1.2
+    min: -68.75
+    max: 68.75
   }
   reference_rotation {
   }
@@ -518,8 +518,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -40.0
+    max: 40.0
   }
   reference_rotation {
   }
@@ -539,8 +539,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -40.0
+    max: 40.0
   }
   reference_rotation {
   }
@@ -560,8 +560,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -40.0
+    max: 40.0
   }
   reference_rotation {
   }
@@ -582,8 +582,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -3.14
-    max: 0.5
+    min: -170.0
+    max: 28.65
   }
   reference_rotation {
   }
@@ -605,8 +605,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -3.14
-    max: 0.7
+    min: -180.0
+    max: 40.11
   }
   reference_rotation {
   }
@@ -628,8 +628,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.5
-    max: 1.5
+    min: -85.94
+    max: 85.94
   }
   reference_rotation {
   }
@@ -663,7 +663,7 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    max: 2.8
+    max: 140.0
   }
   reference_rotation {
   }
@@ -684,8 +684,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -0.5
-    max: 3.14
+    min: -28.65
+    max: 170.0
   }
   reference_rotation {
   }
@@ -707,8 +707,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -3.14
-    max: 0.7
+    min: -180.0
+    max: 40.11
   }
   reference_rotation {
   }
@@ -730,8 +730,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.5
-    max: 1.5
+    min: -85.94
+    max: 85.94
   }
   reference_rotation {
   }
@@ -765,7 +765,7 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    max: 2.8
+    max: 140.0
   }
   reference_rotation {
   }
@@ -785,8 +785,8 @@ joints {
   angular_damping: 20.0
   limit_strength: 2000.0
   angle_limit {
-    min: -1.2
-    max: 1.2
+    min: -68.75
+    max: 68.75
   }
   reference_rotation {
   }
@@ -806,8 +806,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -2.57
-    max: 1.57
+    min: -140.0
+    max: 80.0
   }
   reference_rotation {
   }
@@ -827,8 +827,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -57.3
+    max: 57.3
   }
   reference_rotation {
   }
@@ -848,7 +848,7 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -2.7
+    min: -130.0
   }
   reference_rotation {
   }
@@ -867,8 +867,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -40.0
+    max: 40.0
   }
   reference_rotation {
   }
@@ -888,8 +888,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.57
+    min: -50.0
+    max: 80.0
   }
   reference_rotation {
   }
@@ -909,8 +909,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -20.0
+    max: 20.0
   }
   reference_rotation {
   }
@@ -930,8 +930,8 @@ joints {
   angular_damping: 20.0
   limit_strength: 2000.0
   angle_limit {
-    min: -1.2
-    max: 1.2
+    min: -68.75
+    max: 68.75
   }
   reference_rotation {
   }
@@ -951,8 +951,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -2.57
-    max: 1.57
+    min: -140.0
+    max: 80.0
   }
   reference_rotation {
   }
@@ -972,8 +972,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -57.3
+    max: 57.3
   }
   reference_rotation {
   }
@@ -993,7 +993,7 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -2.7
+    min: -130.0
   }
   reference_rotation {
   }
@@ -1012,8 +1012,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -57.3
+    max: 57.3
   }
   reference_rotation {
   }
@@ -1033,8 +1033,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.57
+    min: -50.0
+    max: 80.0
   }
   reference_rotation {
   }
@@ -1054,8 +1054,8 @@ joints {
   }
   angular_damping: 20.0
   angle_limit {
-    min: -1.0
-    max: 1.0
+    min: -20.0
+    max: 20.0
   }
   reference_rotation {
   }
