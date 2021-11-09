@@ -577,6 +577,7 @@ joints {
   rotation {
     z: 90.0
   }
+  angular_damping: 20.0
   angle_limit {
     min: -75.0
     max: 30.0
@@ -638,6 +639,7 @@ joints {
   rotation {
     y: -90.0
   }
+  angular_damping: 20.0
   angle_limit {
     min: -10.0
     max: 10.0
@@ -659,6 +661,7 @@ joints {
   rotation {
     z: 90.0
   }
+  angular_damping: 20.0
   angle_limit {
     min: -30.0
     max: 70.0
@@ -698,6 +701,7 @@ joints {
   rotation {
     y: -90.0
   }
+  angular_damping: 20.0
   angle_limit {
   }
   reference_rotation {
@@ -723,7 +727,7 @@ joints {
 }
 joints {
   name: "left_hip_z"
-  stiffness: 10.0
+  stiffness: 8000.0
   parent: "pelvis"
   child: "left_thigh"
   parent_offset {
@@ -735,6 +739,7 @@ joints {
   rotation {
     y: 90.0
   }
+  angular_damping: 20.0
   angle_limit {
     min: -10.0
     max: 10.0
@@ -744,7 +749,7 @@ joints {
 }
 joints {
   name: "left_hip_y"
-  stiffness: 20.0
+  stiffness: 8000.0
   parent: "pelvis"
   child: "left_thigh"
   parent_offset {
@@ -756,6 +761,7 @@ joints {
   rotation {
     z: 90.0
   }
+  angular_damping: 20.0
   angle_limit {
     min: -30.0
     max: 70.0
@@ -795,6 +801,7 @@ joints {
   rotation {
     y: -90.0
   }
+  angular_damping: 20.0
   angle_limit {
   }
   reference_rotation {
@@ -838,6 +845,7 @@ joints {
     y: -45.0
     z: -90.0
   }
+  angular_damping: 20.0
   angle_limit {
     min: -85.0
     max: 60.0
@@ -853,6 +861,7 @@ joints {
   rotation {
     y: -90.0
   }
+  angular_damping: 20.0
   angle_limit {
   }
   reference_rotation {
@@ -918,6 +927,7 @@ joints {
     y: -45.0
     z: 90.0
   }
+  angular_damping: 20.0
   angle_limit {
     min: -60.0
     max: 85.0
@@ -933,6 +943,7 @@ joints {
   rotation {
     y: -90.0
   }
+  angular_damping: 20.0
   angle_limit {
   }
   reference_rotation {
