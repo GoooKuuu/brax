@@ -135,7 +135,6 @@ class Humanoid(env.Env):
     square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((11, 1))
     com_angular_vel = (v_cross(disp_vec, body_vel) / square_disp)
     cvel = [com_vel.reshape(-1), com_angular_vel.reshape(-1)]
-    import pdb;pdb.set_trace()
     return jp.concatenate(qpos + qvel + cinert + cvel + qfrc_actuator +
                           cfrc_ext)
 
