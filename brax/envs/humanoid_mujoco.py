@@ -543,7 +543,7 @@ joints {
 }
 joints {
   name: "abdomen_z"
-  stiffness: 15000.0
+  stiffness: 60.0
   parent: "torso"
   child: "lwaist"
   parent_offset {
@@ -564,7 +564,7 @@ joints {
 }
 joints {
   name: "abdomen_y"
-  stiffness: 8000.0
+  stiffness: 30.0
   parent: "torso"
   child: "lwaist"
   parent_offset {
@@ -587,7 +587,7 @@ joints {
 }
 joints {
   name: "abdomen_x"
-  stiffness: 8000.0
+  stiffness: 30.0
   parent: "lwaist"
   child: "pelvis"
   parent_offset {
@@ -607,7 +607,7 @@ joints {
 }
 joints {
   name: "right_hip_x"
-  stiffness: 8000.0
+  stiffness: 30.0
   parent: "pelvis"
   child: "right_thigh"
   parent_offset {
@@ -627,7 +627,7 @@ joints {
 }
 joints {
   name: "right_hip_z"
-  stiffness: 8000.0
+  stiffness: 30.0
   parent: "pelvis"
   child: "right_thigh"
   parent_offset {
@@ -649,7 +649,7 @@ joints {
 }
 joints {
   name: "right_hip_y"
-  stiffness: 8000.0
+  stiffness: 60.0
   parent: "pelvis"
   child: "right_thigh"
   parent_offset {
@@ -709,7 +709,7 @@ joints {
 }
 joints {
   name: "left_hip_x"
-  stiffness: 8000.0
+  stiffness: 30.0
   parent: "pelvis"
   child: "left_thigh"
   parent_offset {
@@ -727,7 +727,7 @@ joints {
 }
 joints {
   name: "left_hip_z"
-  stiffness: 8000.0
+  stiffness: 30.0
   parent: "pelvis"
   child: "left_thigh"
   parent_offset {
@@ -749,7 +749,7 @@ joints {
 }
 joints {
   name: "left_hip_y"
-  stiffness: 8000.0
+  stiffness: 60.0
   parent: "pelvis"
   child: "left_thigh"
   parent_offset {
@@ -771,7 +771,7 @@ joints {
 }
 joints {
   name: "left_knee"
-  stiffness: 15000.0
+  stiffness: 3.0
   parent: "left_thigh"
   child: "left_shin"
   parent_offset {
@@ -809,7 +809,7 @@ joints {
 }
 joints {
   name: "right_shoulder1"
-  stiffness: 15000.0
+  stiffness: 3.0
   parent: "torso"
   child: "right_upper_arm"
   parent_offset {
@@ -831,7 +831,7 @@ joints {
 }
 joints {
   name: "right_shoulder2"
-  stiffness: 15000.0
+  stiffness: 30.0
   parent: "torso"
   child: "right_upper_arm"
   parent_offset {
@@ -891,7 +891,7 @@ joints {
 }
 joints {
   name: "left_shoulder1"
-  stiffness: 15000.0
+  stiffness: 3.0
   parent: "torso"
   child: "left_upper_arm"
   parent_offset {
@@ -913,7 +913,7 @@ joints {
 }
 joints {
   name: "left_shoulder2"
-  stiffness: 15000.0
+  stiffness: 3.0
   parent: "torso"
   child: "left_upper_arm"
   parent_offset {
