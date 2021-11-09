@@ -23,14 +23,14 @@ from brax.io import html
 
 if __name__ == '__main__':
     print('------------------------')
-    env_name = "humanoid_mujoco"  
+    env_name = "humanoid"  
     # param ['ant', 'humanoid', 'fetch', 'grasp', 'halfcheetah', 'ur5e', 'reacher']
     env_fn = envs.create_fn(env_name=env_name)
     env = env_fn()
     
     train_fn = {
-    'humanoid_mujoco': functools.partial(
-      ppo.train, num_timesteps = 100000000, log_frequency = 40,
+    'humanoid': functools.partial(
+      ppo.train, num_timesteps = 50000000, log_frequency = 20,
       reward_scaling = 0.1, episode_length = 1000, normalize_observations = True,
       action_repeat = 1, unroll_length = 10, num_minibatches = 32,
       num_update_epochs = 8, discounting = 0.97, learning_rate = 3e-4,
@@ -86,7 +86,7 @@ if __name__ == '__main__':
                 flag = jnp.array([1])
                 state = jit_env_step(state, act)
             html.save_html(
-                f'{output_path}/_sweep1.html',
+                f'{output_path}/_sweep2.html',
                 env.sys,
                 qps
             )    
