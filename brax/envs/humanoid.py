@@ -79,16 +79,15 @@ class Humanoid(env.Env):
     """Observe humanoid body position, velocities, and angles."""
     # some pre-processing to pull joint angles and velocities
     joint_1d_angle, joint_1d_vel = self.sys.joints[0].angle_vel(qp)
-    joint_2d_angle, joint_2d_vel = self.sys.joints[1].angle_vel(qp)
-    joint_3d_angle, joint_3d_vel = self.sys.joints[2].angle_vel(qp)
+    joint_3d_angle, joint_3d_vel = self.sys.joints[1].angle_vel(qp)
+    #joint_3d_angle, joint_3d_vel = self.sys.joints[2].angle_vel(qp)
 
     # qpos:
     # Z of the torso (1,)
     # orientation of the torso as quaternion (4,)
     # joint angles (8,)
     qpos = [
-        qp.pos[0, 2:], qp.rot[0], joint_1d_angle[0], joint_2d_angle[0],
-        joint_2d_angle[1], joint_3d_angle[0], joint_3d_angle[1],
+        qp.pos[0, 2:], qp.rot[0], joint_1d_angle[0], joint_3d_angle[0], joint_3d_angle[1],
         joint_3d_angle[2]
     ]
 
@@ -97,7 +96,7 @@ class Humanoid(env.Env):
     # angular velocity of the torso (3,)
     # joint angle velocities (8,)
     qvel = [
-        qp.vel[0], qp.ang[0], joint_1d_vel[0], joint_2d_vel[0], joint_2d_vel[1],
+        qp.vel[0], qp.ang[0], joint_1d_vel[0],
         joint_3d_vel[0], joint_3d_vel[1], joint_3d_vel[2]
     ]
 
