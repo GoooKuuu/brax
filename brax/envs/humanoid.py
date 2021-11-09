@@ -153,6 +153,15 @@ bodies {
       length: 0.28
     }
   }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 3.5918877
+}
+bodies {
+  name: "head"
   colliders {
     position {
       z: 0.19
@@ -162,6 +171,15 @@ bodies {
       length: 0.18
     }
   }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 3.053628
+}
+bodies {
+  name: "uwaist"
   colliders {
     position {
       x: -0.01
@@ -180,7 +198,7 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 8.907463
+  mass: 2.2619467
 }
 bodies {
   name: "lwaist"
@@ -466,6 +484,32 @@ bodies {
   }
   mass: 1.0
   frozen { all: true }
+}
+joints {
+  name: "head"
+  stiffness: 15000.0
+  parent: "torso"
+  child: "head"
+  rotation {
+    y: -90.0
+  }
+  angle_limit {
+  }
+  reference_rotation {
+  }
+}
+joints {
+  name: "uwaist"
+  stiffness: 15000.0
+  parent: "torso"
+  child: "uwaist"
+  rotation {
+    y: -90.0
+  }
+  angle_limit {
+  }
+  reference_rotation {
+  }
 }
 joints {
   name: "abdomen_z"
