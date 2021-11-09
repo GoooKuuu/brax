@@ -127,12 +127,12 @@ class Humanoid(env.Env):
 
     disp_vec = body_pos - com_vec
     com_inert = self.inertia + self.mass.reshape(
-        (13, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
-            (13, 1, 1)) * jp.stack([jp.eye(3)] * 13) - v_outer(disp_vec))
+        (17, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
+            (17, 1, 1)) * jp.stack([jp.eye(3)] * 17) - v_outer(disp_vec))
 
     cinert = [com_inert.reshape(-1)]
 
-    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((13, 1))
+    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((17, 1))
     com_angular_vel = (v_cross(disp_vec, body_vel) / square_disp)
     cvel = [com_vel.reshape(-1), com_angular_vel.reshape(-1)]
     return jp.concatenate(qpos + qvel + cinert + cvel + qfrc_actuator +
@@ -278,9 +278,18 @@ bodies {
       end: -1
     }
   }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 2.755696
+}
+bodies {
+  name: "right_foot"
   colliders {
     position {
-      z: -0.35
+      z: 0.1
     }
     capsule {
       radius: 0.075
@@ -293,7 +302,7 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 4.5228419
+  mass: 1.7671459
 }
 bodies {
   name: "left_thigh"
@@ -332,9 +341,18 @@ bodies {
       end: -1
     }
   }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 2.755696
+}
+bodies {
+  name: "left_foot"
   colliders {
     position {
-      z: -0.35
+      z: 0.1
     }
     capsule {
       radius: 0.075
@@ -347,7 +365,7 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 4.5228419
+  mass: 1.7671459
 }
 bodies {
   name: "right_upper_arm"
@@ -392,6 +410,15 @@ bodies {
       length: 0.33912814
     }
   }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 0.9614576
+}
+bodies {
+  name: "right_hand"
   colliders {
     position {
       x: 0.18
@@ -408,7 +435,7 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 1.2295402
+  mass: 0.26808256
 }
 bodies {
   name: "left_upper_arm"
@@ -453,6 +480,15 @@ bodies {
       length: 0.33912814
     }
   }
+  inertia {
+    x: 1.0
+    y: 1.0
+    z: 1.0
+  }
+  mass: 0.9614576
+}
+bodies {
+  name: "left_hand"
   colliders {
     position {
       x: 0.18
@@ -469,7 +505,7 @@ bodies {
     y: 1.0
     z: 1.0
   }
-  mass: 1.2295402
+  mass: 0.26808256
 }
 bodies {
   name: "floor"
@@ -623,6 +659,23 @@ joints {
   }
 }
 joints {
+  name: "$right_shin.right_foot"
+  stiffness: 15000.0
+  parent: "right_shin"
+  child: "right_foot"
+  parent_offset {
+    z: -0.45
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+  }
+  reference_rotation {
+  }
+}
+joints {
   name: "left_hip_x"
   stiffness: 8000.0
   parent: "pelvis"
@@ -670,6 +723,23 @@ joints {
   }
 }
 joints {
+  name: "$left_shin.left_foot"
+  stiffness: 15000.0
+  parent: "left_shin"
+  child: "left_foot"
+  parent_offset {
+    z: -0.45
+  }
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+  }
+  reference_rotation {
+  }
+}
+joints {
   name: "right_shoulder1"
   stiffness: 15000.0
   parent: "torso"
@@ -694,6 +764,20 @@ joints {
     max: 60.0
   }
   limit_strength: 1000.0
+}
+joints {
+  name: "right_hand"
+  stiffness: 15000.0
+  parent: "right_lower_arm"
+  child: "right_hand"
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+  }
+  reference_rotation {
+  }
 }
 joints {
   name: "right_elbow"
@@ -742,6 +826,20 @@ joints {
     max: 85.0
   }
   limit_strength: 1000.0
+}
+joints {
+  name: "left_hand"
+  stiffness: 15000.0
+  parent: "left_lower_arm"
+  child: "left_hand"
+  rotation {
+    y: -90.0
+  }
+  angular_damping: 20.0
+  angle_limit {
+  }
+  reference_rotation {
+  }
 }
 joints {
   name: "left_elbow"
