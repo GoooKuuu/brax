@@ -127,12 +127,12 @@ class Humanoid(env.Env):
 
     disp_vec = body_pos - com_vec
     com_inert = self.inertia + self.mass.reshape(
-        (11, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
-            (11, 1, 1)) * jp.stack([jp.eye(3)] * 11) - v_outer(disp_vec))
+        (13, 1, 1)) * ((jp.norm(disp_vec, axis=1)**2.).reshape(
+            (13, 1, 1)) * jp.stack([jp.eye(3)] * 13) - v_outer(disp_vec))
 
     cinert = [com_inert.reshape(-1)]
 
-    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((11, 1))
+    square_disp = (1e-7 + (jp.norm(disp_vec, axis=1)**2.)).reshape((13, 1))
     com_angular_vel = (v_cross(disp_vec, body_vel) / square_disp)
     cvel = [com_vel.reshape(-1), com_angular_vel.reshape(-1)]
     return jp.concatenate(qpos + qvel + cinert + cvel + qfrc_actuator +
@@ -530,10 +530,6 @@ joints {
   angle_limit {
     min: -45.0
     max: 45.0
-  }
-  angle_limit {
-    min: -75.0
-    max: 30.0
   }
 }
 joints {
