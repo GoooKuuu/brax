@@ -741,7 +741,7 @@ joints {
 }
 joints {
   name: "right_shoulder1"
-  stiffness: 15000.0
+  stiffness: 1.0
   parent: "torso"
   child: "right_upper_arm"
   parent_offset {
@@ -751,19 +751,39 @@ joints {
   child_offset {
   }
   rotation {
-    x: 135.0
-    y: 35.26439
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -85.0
-    max: 60.0
+    x: -5.7684793
+    y: -24.094843
+    z: 26.565052
   }
   angle_limit {
     min: -85.0
     max: 60.0
   }
-  limit_strength: 1000.0
+  reference_rotation {
+  }
+}
+joints {
+  name: "right_shoulder2"
+  stiffness: 1.0
+  parent: "torso"
+  child: "right_upper_arm"
+  parent_offset {
+    y: -0.17
+    z: 0.06
+  }
+  child_offset {
+  }
+  rotation {
+    x: 45.0
+    y: -45.0
+    z: -90.0
+  }
+  angle_limit {
+    min: -85.0
+    max: 60.0
+  }
+  reference_rotation {
+  }
 }
 joints {
   name: "right_hand"
@@ -803,7 +823,7 @@ joints {
 }
 joints {
   name: "left_shoulder1"
-  stiffness: 15000.0
+  stiffness: 1.0
   parent: "torso"
   child: "left_upper_arm"
   parent_offset {
@@ -813,19 +833,39 @@ joints {
   child_offset {
   }
   rotation {
-    x: 45.0
-    y: -35.26439
-  }
-  angular_damping: 20.0
-  angle_limit {
-    min: -60.0
-    max: 85.0
+    x: 5.7684793
+    y: -24.094843
+    z: -26.565052
   }
   angle_limit {
     min: -60.0
     max: 85.0
   }
-  limit_strength: 1000.0
+  reference_rotation {
+  }
+}
+joints {
+  name: "left_shoulder2"
+  stiffness: 1.0
+  parent: "torso"
+  child: "left_upper_arm"
+  parent_offset {
+    y: 0.17
+    z: 0.06
+  }
+  child_offset {
+  }
+  rotation {
+    x: -45.0
+    y: -45.0
+    z: 90.0
+  }
+  angle_limit {
+    min: -60.0
+    max: 85.0
+  }
+  reference_rotation {
+  }
 }
 joints {
   name: "left_hand"
@@ -920,6 +960,13 @@ actuators {
   }
 }
 actuators {
+  name: "right_shoulder2"
+  joint: "right_shoulder2"
+  strength: 100.0
+  torque {
+  }
+}
+actuators {
   name: "right_elbow"
   joint: "right_elbow"
   strength: 100.0
@@ -929,6 +976,13 @@ actuators {
 actuators {
   name: "left_shoulder1"
   joint: "left_shoulder1"
+  strength: 100.0
+  torque {
+  }
+}
+actuators {
+  name: "left_shoulder2"
+  joint: "left_shoulder2"
   strength: 100.0
   torque {
   }
