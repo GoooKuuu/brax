@@ -78,16 +78,18 @@ class Humanoid(env.Env):
                action: jp.ndarray) -> jp.ndarray:
     """Observe humanoid body position, velocities, and angles."""
     # some pre-processing to pull joint angles and velocities
-    (joint_1d_angle,), (joint_1d_vel,) = self.sys.joints[0].angle_vel(qp)
-    #joint_3d_angle, joint_3d_vel = self.sys.joints[1].angle_vel(qp)
-    #joint_3d_angle, joint_3d_vel = self.sys.joints[2].angle_vel(qp)
+    joint_1d_angle, joint_1d_vel = self.sys.joints[0].angle_vel(qp)
+    joint_2d_angle, joint_2d_vel = self.sys.joints[1].angle_vel(qp)
+    joint_3d_angle, joint_3d_vel = self.sys.joints[2].angle_vel(qp)
 
     # qpos:
     # Z of the torso (1,)
     # orientation of the torso as quaternion (4,)
     # joint angles (8,)
     qpos = [
-        qp.pos[0, 2:], qp.rot[0], joint_1d_angle
+        qp.pos[0, 2:], qp.rot[0], joint_1d_angle[0], joint_2d_angle[0],
+        joint_2d_angle[1], joint_3d_angle[0], joint_3d_angle[1],
+        joint_3d_angle[2]
     ]
 
     # qvel:
@@ -95,7 +97,8 @@ class Humanoid(env.Env):
     # angular velocity of the torso (3,)
     # joint angle velocities (8,)
     qvel = [
-        qp.vel[0], qp.ang[0], joint_1d_vel
+        qp.vel[0], qp.ang[0], joint_1d_vel[0], joint_2d_vel[0], joint_2d_vel[1],
+        joint_3d_vel[0], joint_3d_vel[1], joint_3d_vel[2]
     ]
 
     # actuator forces
@@ -607,7 +610,7 @@ joints {
   }
 }
 joints {
-  name: "right_hip_z"
+  name: "right_hip_x"
   stiffness: 8000.0
   parent: "pelvis"
   child: "right_thigh"
@@ -625,44 +628,10 @@ joints {
     min: -10.0
     max: 10.0
   }
-}
-joints {
-  name: "right_hip_x"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "right_thigh"
-  parent_offset {
-    y: -0.1
-    z: -0.04
-  }
-  child_offset {
-  }
-  rotation {
-    z: 90.0
-  }
-  angular_damping: 20.0
-  limit_strength: 2000.0
   angle_limit {
     min: -30.0
     max: 70.0
   }
-}
-joints {
-  name: "right_hip_y"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "right_thigh"
-  parent_offset {
-    y: -0.1
-    z: -0.04
-  }
-  child_offset {
-  }
-  rotation {
-    y: -90.0
-  }
-  angular_damping: 20.0
-  limit_strength: 2000.0
   angle_limit {
     min: -10.0
     max: 10.0
@@ -707,7 +676,7 @@ joints {
   }
 }
 joints {
-  name: "left_hip_z"
+  name: "left_hip_x"
   stiffness: 8000.0
   parent: "pelvis"
   child: "left_thigh"
@@ -723,44 +692,10 @@ joints {
     min: -10.0
     max: 10.0
   }
-}
-joints {
-  name: "left_hip_x"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "left_thigh"
-  parent_offset {
-    y: 0.1
-    z: -0.04
-  }
-  child_offset {
-  }
-  rotation {
-    z: 90.0
-  }
-  angular_damping: 20.0
-  limit_strength: 2000.0
   angle_limit {
     min: -30.0
     max: 70.0
   }
-}
-joints {
-  name: "left_hip_y"
-  stiffness: 8000.0
-  parent: "pelvis"
-  child: "left_thigh"
-  parent_offset {
-    y: 0.1
-    z: -0.04
-  }
-  child_offset {
-  }
-  rotation {
-    y: 90.0
-  }
-  angular_damping: 20.0
-  limit_strength: 2000.0
   angle_limit {
     min: -10.0
     max: 10.0
@@ -816,39 +751,19 @@ joints {
   child_offset {
   }
   rotation {
-    x: -5.7684793
-    y: -24.094843
-    z: 26.565052
+    x: 135.0
+    y: 35.26439
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -85.0
+    max: 60.0
   }
   angle_limit {
     min: -85.0
     max: 60.0
   }
-  reference_rotation {
-  }
-}
-joints {
-  name: "right_shoulder2"
-  stiffness: 15000.0
-  parent: "torso"
-  child: "right_upper_arm"
-  parent_offset {
-    y: -0.17
-    z: 0.06
-  }
-  child_offset {
-  }
-  rotation {
-    x: 45.0
-    y: -45.0
-    z: -90.0
-  }
-  angle_limit {
-    min: -85.0
-    max: 60.0
-  }
-  reference_rotation {
-  }
+  limit_strength: 1000.0
 }
 joints {
   name: "right_hand"
@@ -898,39 +813,19 @@ joints {
   child_offset {
   }
   rotation {
-    x: 5.7684793
-    y: -24.094843
-    z: -26.565052
+    x: 45.0
+    y: -35.26439
+  }
+  angular_damping: 20.0
+  angle_limit {
+    min: -60.0
+    max: 85.0
   }
   angle_limit {
     min: -60.0
     max: 85.0
   }
-  reference_rotation {
-  }
-}
-joints {
-  name: "left_shoulder2"
-  stiffness: 15000.0
-  parent: "torso"
-  child: "left_upper_arm"
-  parent_offset {
-    y: 0.17
-    z: 0.06
-  }
-  child_offset {
-  }
-  rotation {
-    x: -45.0
-    y: -45.0
-    z: 90.0
-  }
-  angle_limit {
-    min: -60.0
-    max: 85.0
-  }
-  reference_rotation {
-  }
+  limit_strength: 1000.0
 }
 joints {
   name: "left_hand"
@@ -997,20 +892,6 @@ actuators {
   }
 }
 actuators {
-  name: "right_hip_y"
-  joint: "right_hip_y"
-  strength: 350.0
-  torque {
-  }
-}
-actuators {
-  name: "right_hip_z"
-  joint: "right_hip_z"
-  strength: 350.0
-  torque {
-  }
-}
-actuators {
   name: "right_knee"
   joint: "right_knee"
   strength: 350.0
@@ -1020,20 +901,6 @@ actuators {
 actuators {
   name: "left_hip_x"
   joint: "left_hip_x"
-  strength: 350.0
-  torque {
-  }
-}
-actuators {
-  name: "left_hip_y"
-  joint: "left_hip_y"
-  strength: 350.0
-  torque {
-  }
-}
-actuators {
-  name: "left_hip_z"
-  joint: "left_hip_z"
   strength: 350.0
   torque {
   }
@@ -1053,13 +920,6 @@ actuators {
   }
 }
 actuators {
-  name: "right_shoulder2"
-  joint: "right_shoulder2"
-  strength: 100.0
-  torque {
-  }
-}
-actuators {
   name: "right_elbow"
   joint: "right_elbow"
   strength: 100.0
@@ -1069,13 +929,6 @@ actuators {
 actuators {
   name: "left_shoulder1"
   joint: "left_shoulder1"
-  strength: 100.0
-  torque {
-  }
-}
-actuators {
-  name: "left_shoulder2"
-  joint: "left_shoulder2"
   strength: 100.0
   torque {
   }
