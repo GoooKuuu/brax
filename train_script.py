@@ -55,7 +55,7 @@ if __name__ == '__main__':
         plt.xlabel('# environment steps')
         plt.ylabel('reward per episode')
         plt.plot(xdata, ydata)
-        plt.save('see.png',f'{output_path}/')
+        plt.savefig('see.png',f'{output_path}/')
         print('eval/episode_reward:',metrics['eval/episode_reward'])
         #print('eval/episode_y_vs_x_reward:',metrics['eval/episode_y_vs_x_reward'])
     process_id = jax.process_index()
