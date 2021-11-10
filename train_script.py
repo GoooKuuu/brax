@@ -23,13 +23,13 @@ from brax.io import html
 
 if __name__ == '__main__':
     print('------------------------')
-    env_name = "humanoid_mujoco"  
+    env_name = "humanoid"  
     # param ['ant', 'humanoid', 'fetch', 'grasp', 'halfcheetah', 'ur5e', 'reacher']
     env_fn = envs.create_fn(env_name=env_name)
     env = env_fn()
     
     train_fn = {
-    'humanoid_mujoco': functools.partial(
+    'humanoid': functools.partial(
       ppo.train, num_timesteps = 50000000, log_frequency = 20,
       reward_scaling = 0.1, episode_length = 1000, normalize_observations = True,
       action_repeat = 1, unroll_length = 10, num_minibatches = 32,
@@ -45,10 +45,17 @@ if __name__ == '__main__':
     
 
     xdata = []
+    ydata = []
     def progress(num_steps, metrics):
         times.append(datetime.now())
         xdata.append(num_steps)
-       
+        ydata.append(metrics['eval/episode_reward'])
+        plt.xlim([0, train_fn.keywords['num_timesteps']])
+        plt.ylim([0, 12000])
+        plt.xlabel('# environment steps')
+        plt.ylabel('reward per episode')
+        plt.plot(xdata, ydata)
+        plt.save('see.png',f'{output_path}/')
         print('eval/episode_reward:',metrics['eval/episode_reward'])
         #print('eval/episode_y_vs_x_reward:',metrics['eval/episode_y_vs_x_reward'])
     process_id = jax.process_index()
