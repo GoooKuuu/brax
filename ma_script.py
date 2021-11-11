@@ -52,6 +52,9 @@ if __name__ == '__main__':
     if output_path:
         output_path = f'{output_path}/{datetime.now().strftime("%Y%m%d")}' 
         output_path = f'{output_path}/{env_name}'
+        exist = os.path.exists(output_path)
+        if not exist:
+            os.makedirs(output_path, exist_ok=True)
         print(f'Saving outputs to {output_path}')
 
     # check supported params
