@@ -103,7 +103,7 @@ if __name__ == '__main__':
         plotpatterns, times, tab=tab, max_ncols=5,
         xlim=[0, train_fn.keywords['num_timesteps']],
         #pre_plot_fn = lambda : clear_output(wait=True),
-        post_plot_fn = plt.savefig(f'{env_name}.png',output_path))
+        post_plot_fn = plt.savefig(f'{output_path}/train.png'))
 
     if skip_training:
         action_size = (env.group_action_shapes if 
