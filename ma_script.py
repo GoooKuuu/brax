@@ -43,6 +43,8 @@ def show_env(env, mode):
             )    
 
 if __name__ == '__main__':
+
+
     env_list = composer.list_env()
     print(f'{len(env_list)} registered envs, e.g. {env_list[:]}...')
 
@@ -69,6 +71,13 @@ if __name__ == '__main__':
     env_fn = composer.create_fn(env_name=env_name,
     **(env_params or {}))
     env = env_fn()
+    process_id = jax.process_index()
+    if process_id == 0:
+        print('init success')
+        print('local device count:',jax.local_device_count())
+        print('total device count:',jax.device_count())
+        print('env observation:',env.observation_size)
+        
     show_env(env, mode)
     times.append(datetime.now())
     print(f'time to init: {times[-1] - times[-2]}')
