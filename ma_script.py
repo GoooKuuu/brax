@@ -15,7 +15,7 @@ from brax.experimental.braxlines.common import logger_utils
 from brax.experimental.braxlines.training import ppo
 from brax.experimental.braxlines import experiments
 
-output_path = 'checkpoint'
+
 
 
 def show_env(env, mode):
@@ -43,14 +43,13 @@ def show_env(env, mode):
             )    
 
 if __name__ == '__main__':
-
-
     env_list = composer.list_env()
     print(f'{len(env_list)} registered envs, e.g. {env_list[:]}...')
 
     env_name = 'sumo' # @param ['squidgame', 'sumo', 'follow', 'chase', 'pro_ant_run', 'ant_run', 'ant_chase', 'ant_push']
     env_params = None # @param{'type': 'raw'}
     mode = 'viewer'# @param ['print_step', 'print_obs', 'print_sys', 'viewer']
+    output_path = f'checkpoint/{env_name}'
     if output_path:
         output_path = f'{output_path}/{datetime.now().strftime("%Y%m%d")}' 
         output_path = f'{output_path}/{env_name}'
@@ -77,8 +76,66 @@ if __name__ == '__main__':
         print('local device count:',jax.local_device_count())
         print('total device count:',jax.device_count())
         print('env observation:',env.observation_size)
-        
+
     show_env(env, mode)
     times.append(datetime.now())
-    print(f'time to init: {times[-1] - times[-2]}')
+
+
+    num_timesteps_multiplier =   3# @param {type: 'number'}
+    seed = 0 # @param{type: 'integer'}
+    skip_training = False # @param {type: 'boolean'}
+
+    log_path = output_path
+    if log_path:
+        log_path = f'{log_path}/training_curves.csv'
+    tab = logger_utils.Tabulator(output_path=log_path,
+        append=False)
+
+    ppo_lib = mappo if env.is_multiagent else ppo
+    ppo_params = experiments.defaults.get_ppo_params(
+        'ant', num_timesteps_multiplier)
+    train_fn = functools.partial(ppo_lib.train, **ppo_params)
+
+    times = [datetime.now()]
+    plotpatterns = ['eval/episode_reward', 'eval/episode_score']
+
+    progress, _, _, _ = experiments.get_progress_fn(
+        plotpatterns, times, tab=tab, max_ncols=5,
+        xlim=[0, train_fn.keywords['num_timesteps']],
+        #pre_plot_fn = lambda : clear_output(wait=True),
+        post_plot_fn = plt.savefig(f'{env_name}.png',output_path))
+
+    if skip_training:
+        action_size = (env.group_action_shapes if 
+            env.is_multiagent else env.action_size)
+        params, inference_fn = ppo_lib.make_params_and_inference_fn(
+            env.observation_size, action_size,
+            normalize_observations=True)
+        inference_fn = jax.jit(inference_fn)
+    else:
+        inference_fn, params, _ = train_fn(
+            environment_fn=env_fn, seed=seed,
+            extra_step_kwargs=False, progress_fn=progress)
+
+    times.append(datetime.now())
+
+    print(f'time to jit: {times[1] - times[0]}')
+    print(f'time to train: {times[-1] - times[1]}')
+
+    eval_seed = 0  # @param {'type': 'integer'}
+    batch_size =  1# @param {type: 'integer'}
+
+    env, states = evaluators.visualize_env(
+        env_fn=env_fn, inference_fn=inference_fn,
+        params=params, batch_size=batch_size,
+        seed = eval_seed, output_path=output_path,
+        verbose=True,
+    )
+    html.save_html(
+                f'{output_path}/render.html',
+                env.sys,
+                [state.qp for state in states]
+            )    
+
+    #print(f'time to init: {times[-1] - times[-2]}')
 

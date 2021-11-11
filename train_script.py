@@ -73,7 +73,7 @@ if __name__ == '__main__':
             print(f'time to jit: {times[1] - times[0]}')
             print(f'time to train: {times[-1] - times[1]}')
 
-
+        
         
         #save video
         for ii in range(5):
