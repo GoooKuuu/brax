@@ -44,7 +44,7 @@ normalize_obs_for_disc = False  # @param {'type': 'boolean'}
 seed =   0# @param {type: 'integer'}
 diayn_num_skills = 8  # @param {type: 'integer'}
 spectral_norm = True  # @param {'type': 'boolean'}
-output_path = '' # @param {'type': 'string'}
+output_path = 'mi_checkpoint' # @param {'type': 'string'}
 task_name = "" # @param {'type': 'string'}
 exp_name = '' # @param {'type': 'string'}
 if output_path:
@@ -53,6 +53,9 @@ if output_path:
   task_name = task_name or f'{env_name}_{obs_indices_str}_{obs_scale}'
   exp_name = exp_name or algo_name 
   output_path = f'{output_path}/{task_name}/{exp_name}'
+  exist = os.path.exists(output_path)
+  if not exist:
+    os.makedirs(output_path, exist_ok=True)
 print(f'output_path={output_path}')
 
 
@@ -133,8 +136,12 @@ if visualize:
   env = env_fn()
   jit_env_reset = jax.jit(env.reset)
   state = jit_env_reset(rng=jax.random.PRNGKey(seed=seed))
-  clear_output()  # clear out jax.lax warning before rendering
-  HTML(html.render(env.sys, [state.qp]))
+  #HTML(html.render(env.sys, [state.qp]))
+  html.save_html(
+      f'{output_path}/render.html',
+      env.sys,
+      [state.qp]
+  )    
 
 
 
@@ -173,15 +180,41 @@ progress, plot, _, _ = experiments.get_progress_fn(
     plotpatterns, times, tab=tab, max_ncols=5,
     xlim=[0, train_fn.keywords['num_timesteps']],
     update_metrics_fn = update_metrics_fn,
-    pre_plot_fn = lambda : clear_output(wait=True),
-    post_plot_fn = plt.show)
+    #pre_plot_fn = lambda : clear_output(wait=True),
+    #post_plot_fn = plt.show
+    )
 
 extra_loss_fns = dict(disc_loss=disc.disc_loss_fn) if extra_params else None
 _, params, _ = train_fn(
     environment_fn=env_fn, progress_fn=progress, extra_params=extra_params,
     extra_loss_fns=extra_loss_fns, seed=seed)
-clear_output(wait=True)
-plot(output_path=output_path)
+#clear_output(wait=True)
+#plot(output_path=output_path)
 
 print(f'time to jit: {times[1] - times[0]}')
 print(f'time to train: {times[-1] - times[1]}')
+
+#save video
+for z_vale in range(diayn_num_skills):
+#z_value =   0# @param {'type': 'raw'}
+  eval_seed = 0  # @param {'type': 'integer'}
+
+  z = {
+      'fixed_gcrl': jnp.ones(disc.z_size) * z_value,
+      'gcrl': jnp.ones(disc.z_size) * z_value,
+      'cdiayn': jnp.ones(disc.z_size) * z_value,
+      'diayn': jax.nn.one_hot(jnp.array(int(z_value)), disc.z_size),
+      'diayn_full': jax.nn.one_hot(jnp.array(int(z_value)), disc.z_size),
+  }[algo_name] if z_value is not None else None
+
+  env, states = evaluators.visualize_env(
+      env_fn=eval_env_fn,
+      inference_fn=inference_fn,
+      params=params,
+      batch_size=0,
+      seed = eval_seed,
+      reset_args = (z,),
+      step_args = (params['normalizer'], params['extra']),
+      output_path=output_path,
+      output_name=f'video_z_{z_value}',
+  )
