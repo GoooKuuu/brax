@@ -190,9 +190,10 @@ _, params, _ = train_fn(
     extra_loss_fns=extra_loss_fns, seed=seed)
 #clear_output(wait=True)
 #plot(output_path=output_path)
-
-print(f'time to jit: {times[1] - times[0]}')
-print(f'time to train: {times[-1] - times[1]}')
+process_id = jax.process_index()
+if process_id == 0:
+  print(f'time to jit: {times[1] - times[0]}')
+  print(f'time to train: {times[-1] - times[1]}')
 
 #save video
 for z_value in range(diayn_num_skills):
