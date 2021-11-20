@@ -22,6 +22,9 @@ import tensorflow_probability as tfp
 tfp = tfp.substrates.jax
 tfd = tfp.distributions
 
+process_id = jax.process_index()
+print('local device count:',jax.local_device_count())
+print('total device count:',jax.device_count())
 
 '''
 首先要定义task and experiment parameters
@@ -194,7 +197,7 @@ for env_name in ['ant', 'humanoid', 'uni_ant', 'bi_ant']:
         extra_loss_fns=extra_loss_fns, seed=seed)
     #clear_output(wait=True)
     #plot(output_path=output_path)
-    process_id = jax.process_index()
+    
     if process_id == 0:
       print(f'time to jit: {times[1] - times[0]}')
       print(f'time to train: {times[-1] - times[1]}')
