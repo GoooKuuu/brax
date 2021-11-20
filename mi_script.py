@@ -37,7 +37,7 @@ obs_indices = OBS_INDICES[obs_indices][env_name]
 #@markdown See [vgcrl/utils.py](https://github.com/google/brax/blob/main/brax/experimental/braxlines/vgcrl/utils.py)
 evaluate_mi = False # @param{'type': 'boolean'}
 evaluate_lgr = False # @param{'type': 'boolean'}
-for algo_name in ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']
+for algo_name in ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']:
 #algo_name = 'diayn'  # @param ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']
   env_reward_multiplier =   0# @param{'type': 'number'}
   obs_norm_reward_multiplier =   0# @param{'type': 'number'}
