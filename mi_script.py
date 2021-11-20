@@ -39,7 +39,8 @@ for env_name in ['ant', 'humanoid', 'uni_ant', 'bi_ant']:
   #@markdown See [vgcrl/utils.py](https://github.com/google/brax/blob/main/brax/experimental/braxlines/vgcrl/utils.py)
   evaluate_mi = False # @param{'type': 'boolean'}
   evaluate_lgr = False # @param{'type': 'boolean'}
-  for algo_name in ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']:
+  #for algo_name in ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']:
+  for algo_name in ['diayn']:
   #algo_name = 'diayn'  # @param ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']
     print(f'----------algo_name:{algo_name}-------------')
     env_reward_multiplier =   0# @param{'type': 'number'}
