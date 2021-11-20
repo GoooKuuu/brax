@@ -34,3 +34,4 @@ def clipped_bernoulli(logits: jnp.ndarray, clip_range: float = 0):
     assert clip_range > 0.0, clip_range
     logits = jnp.clip(logits, a_min=-clip_range, a_max=clip_range)
   return tfd.Bernoulli(logits=logits)
+  

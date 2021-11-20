@@ -69,20 +69,26 @@ class Discriminator(object):
     self.normalize_obs = normalize_obs
     self.obs_indices, self.obs_labels = observers.index_preprocess(
         obs_indices, env)
+    #self.obs_indices:[13, 14]
+    #self.obs_labels: ['obs[13]', 'obs[14]'] 
     self.indexed_obs_size = len(self.obs_indices)
     self.obs_scale = jnp.array(obs_scale or 1.) * jnp.ones(
         self.indexed_obs_size)
+    #[10., 10.]
     self.normalize_fn = normalization.make_data_and_apply_fn(
         [self.env_obs_size + self.z_size], self.normalize_obs)[1]
+    #[self.env_obs_size + self.z_size]:87+8
     self.spectral_norm = spectral_norm
     self.logits_clip_range = logits_clip_range
     self.nonnegative_reward = nonnegative_reward
     self.ll_q_offset = 0.0
+    
 
     # define dist_params_to_dist for q_z_o
     dist_q_params = copy.deepcopy(dist_q_params) or {}
     q_scale = dist_q_params.pop('scale', 1.)
     q_scale = jnp.array(q_scale) * jnp.ones(self.z_size)
+    #[1]*8
     assert z_size
     if dist_q == 'FixedSigma':
       self.dist_q_fn = lambda x: tfd.MultivariateNormalDiag(x, q_scale)
@@ -101,7 +107,6 @@ class Discriminator(object):
     else:
       raise NotImplementedError(dist_q)
     assert not dist_q_params, f'unused dist_q_params: {dist_q_params}'
-
     # define dist for p_z
     dist_p_params = copy.deepcopy(dist_p_params) or {}
     if dist_p == 'Uniform':
@@ -118,7 +123,6 @@ class Discriminator(object):
     else:
       raise NotImplementedError(dist_p)
     assert not dist_p_params, f'unused dist_p_params: {dist_p_params}'
-
     self.initialized = False
 
   def init_model(self, rng: jnp.ndarray = None):

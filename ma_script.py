@@ -43,7 +43,7 @@ def show_env(env, mode):
             )    
 
 if __name__ == '__main__':
-    envs = ['follow','chase','sumo','squidgame']
+    envs = ['sumo']
     for env_name in envs:
         print(f'---------------{env_name}---------------')
         env_list = composer.list_env()
