@@ -195,7 +195,7 @@ print(f'time to jit: {times[1] - times[0]}')
 print(f'time to train: {times[-1] - times[1]}')
 
 #save video
-for z_vale in range(diayn_num_skills):
+for z_value in range(diayn_num_skills):
 #z_value =   0# @param {'type': 'raw'}
   eval_seed = 0  # @param {'type': 'integer'}
 
