@@ -31,7 +31,7 @@ print('total device count:',jax.device_count())
 
 '''
 #env_name = 'ant'  # @param ['ant', 'humanoid', 'halfcheetah', 'uni_ant', 'bi_ant']
-for env_name in ['ant', 'humanoid', 'uni_ant', 'bi_ant']:
+for env_name in ['uni_ant', 'bi_ant']:
   print(f'----------env_name:{env_name}-------------')
   obs_indices = 'vel'  # @param ['vel']
   obs_scale = 10.0 #@param{'type': 'number'}
