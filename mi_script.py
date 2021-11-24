@@ -74,7 +74,6 @@ for env_name in ['ant', 'humanoid']:
     base_env = base_env_fn()
     #使用composer来创造环境
 
-
     #创建判别器 这个应该很重要
     # Create discriminator-parameterized environment
     disc = vgcrl_utils.create_disc_fn(algo_name=algo_name,
