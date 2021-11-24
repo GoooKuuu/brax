@@ -31,7 +31,7 @@ print('total device count:',jax.device_count())
 
 '''
 #env_name = 'ant'  # @param ['ant', 'humanoid', 'halfcheetah', 'uni_ant', 'bi_ant']
-for env_name in ['ant', 'humanoid']:
+for env_name in ['ant']:
   print(f'----------env_name:{env_name}-------------')
   obs_indices = 'vel'  # @param ['vel']
   obs_scale = 10.0 #@param{'type': 'number'}
@@ -42,7 +42,7 @@ for env_name in ['ant', 'humanoid']:
   #@markdown See [vgcrl/utils.py](https://github.com/google/brax/blob/main/brax/experimental/braxlines/vgcrl/utils.py)
   evaluate_mi = False # @param{'type': 'boolean'}
   evaluate_lgr = False # @param{'type': 'boolean'}
-  for algo_name in ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']:
+  for algo_name in ['diayn']:
   #algo_name = 'diayn'  # @param ['gcrl', 'cdiayn', 'diayn', 'diayn_full', 'fixed_gcrl']
     print(f'----------algo_name:{algo_name}-------------')
     env_reward_multiplier =   0# @param{'type': 'number'}
@@ -51,7 +51,7 @@ for env_name in ['ant', 'humanoid']:
     seed =   0# @param {type: 'integer'}
     diayn_num_skills = 8  # @param {type: 'integer'}
     spectral_norm = True  # @param {'type': 'boolean'}
-    output_path = 'mi_checkpoint' # @param {'type': 'string'}
+    output_path = 'mi_checkpoint_new' # @param {'type': 'string'}
     task_name = "" # @param {'type': 'string'}
     exp_name = '' # @param {'type': 'string'}
     if output_path:
